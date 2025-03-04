@@ -4,4 +4,5 @@ Build instruction:
 Use Visual Studio 2022 to build this app. 
 
 Install instructions:
-Copy the db files(PF_NIC.txt, PF_IPOrg.txt, PF_IPLocations.txt, PF_IPCountry.txt) to USERDIRECTORY\AppData\Local\PathFinder\13
+Just run the Pathfinder.exe app. If windows defender says "trojan:win32/bearfoos.a!ml", you will have to exclude the directory from windows defender. 
+
