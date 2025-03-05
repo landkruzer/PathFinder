@@ -3,10 +3,15 @@
 #include "pch.h"
 
 //#define _CRT_SECURE_NO_WARNINGS
-
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <wininet.h>
 #include <stdio.h>
 # include <winsock2.h>
 
+#pragma comment(lib, "wininet.lib")
 //#include "PathFinder.h"
 
 //#include "MainFrm.h"
@@ -16,12 +21,12 @@
 //#include "winiphelper.h"
 //#include "traceroute.h"
 
-#define US_SERVER_NAME "windowstraceroute.000webhostapp.com"
-#define INDIA_SERVER_NAME "oakswood.hopto.org"
+//#define US_SERVER_NAME "windowstraceroute.000webhostapp.com"
+#define SERVER_NAME "raw.github.com"
 
 #define US_PORT_NUMBER 80
 #define INDIA_PORT_NUMBER 8080
-#define MAX_DB_BUF_SIZE 100000
+#define MAX_DB_BUF_SIZE 200000
 
 #define NIC_DB 1
 #define IPORG_DB 2
@@ -32,6 +37,8 @@ HANDLE g_hGetDBThread;
 DWORD g_dwGetDBThreadID;
 LONG GetDBfromCloudThreadRoutine(LPVOID lpv);
 void UpdateDBVersionNumber(int DBType, int DBVersion);
+int SecureGetWebFile(char* Server, char* fileName, char* pszContent);
+
 
 extern char g_szDbPath[256];
 extern int g_nNICDBVersion,g_nIP2ORGVersion,g_nIP2CNTRYVersion,g_nIP2LocVersion;
@@ -215,7 +222,7 @@ char szTempBuf[256];
 
 }
 
-void GetDBfromClound()
+void GetDBfromClound(bool bWaitTillCompletion)
 {
 
 
@@ -223,7 +230,8 @@ void GetDBfromClound()
 		(LPTHREAD_START_ROUTINE)GetDBfromCloudThreadRoutine,
 		0,  0,   &g_dwGetDBThreadID);
 
-
+		if((NULL != g_hGetDBThread) && bWaitTillCompletion)
+			WaitForSingleObject(g_hGetDBThread, INFINITE);
 }
 
 
@@ -246,7 +254,7 @@ char szFileName[1024];
 	
 	pszContent = (char*) malloc(MAX_DB_BUF_SIZE);
 
-
+#if 0
 	lstrcpy(g_szDBServer, INDIA_SERVER_NAME);
 	pheHost = gethostbyname(g_szDBServer);
     if ( !pheHost ) {
@@ -287,8 +295,11 @@ char szFileName[1024];
 		  }
   
       }
+#endif
 
-	 ContentLength = GetWebFile(iSocketFD, "DBVersion.txt", pszContent);
+//	 ContentLength = GetWebFile(iSocketFD, "DBVersion.txt", pszContent);
+	 ContentLength = SecureGetWebFile(SERVER_NAME, "/landkruzer/PathFinder/master/db/DBVersion.txt", pszContent);
+
 	 if(ContentLength <= 0) return -1;
 
 	  nNICVersion=0;
@@ -308,7 +319,8 @@ char szFileName[1024];
 
 	if(bGetNICDB)
 	{
-		ContentLength = GetWebFile(iSocketFD, "PF_NIC.txt", pszContent);
+		//ContentLength = GetWebFile(iSocketFD, "PF_NIC.txt", pszContent);
+		ContentLength = SecureGetWebFile(SERVER_NAME, "/landkruzer/PathFinder/master/db/PF_NIC.txt", pszContent);
 
 		lstrcpy(szFileName, g_szDbPath);
 		lstrcat(szFileName, "PF_NIC.txt");
@@ -322,7 +334,8 @@ char szFileName[1024];
 
 	if(bGetORGDB)
 	{
-		ContentLength = GetWebFile(iSocketFD, "PF_IPOrg.txt", pszContent);
+		//ContentLength = GetWebFile(iSocketFD, "PF_IPOrg.txt", pszContent);
+		ContentLength = SecureGetWebFile(SERVER_NAME, "/landkruzer/PathFinder/master/db/PF_IPOrg.txt", pszContent);
 
 		lstrcpy(szFileName, g_szDbPath);
 		lstrcat(szFileName, "PF_IPOrg.txt");
@@ -334,7 +347,9 @@ char szFileName[1024];
 	}
 	if(bGetCNTRYDB)
 	{
-		ContentLength = GetWebFile(iSocketFD, "PF_IPCountry.txt", pszContent);
+		//ContentLength = GetWebFile(iSocketFD, "PF_IPCountry.txt", pszContent);
+		ContentLength = SecureGetWebFile(SERVER_NAME, "/landkruzer/PathFinder/master/db/PF_IPCountry.txt", pszContent);
+
 
 		lstrcpy(szFileName, g_szDbPath);
 		lstrcat(szFileName, "PF_IPCountry.txt");
@@ -347,7 +362,9 @@ char szFileName[1024];
 	}
 	if(bGetLocDB)
 	{
-		ContentLength = GetWebFile(iSocketFD, "PF_IPLocations.txt", pszContent);
+		//ContentLength = GetWebFile(iSocketFD, "PF_IPLocations.txt", pszContent);
+		ContentLength = SecureGetWebFile(SERVER_NAME, "/landkruzer/PathFinder/master/db/PF_IPLocations.txt", pszContent);
+
 
 		lstrcpy(szFileName, g_szDbPath);
 		lstrcat(szFileName, "PF_IPLocations.txt");
@@ -357,6 +374,7 @@ char szFileName[1024];
 		}
 	}
 
+#if 0
 	if ( shutdown(iSocketFD, SD_SEND) == -1)
       {
         perror ("whois: shutdown failed");
@@ -367,9 +385,155 @@ char szFileName[1024];
       {
         perror ("whois: socket close failed");
       }
-
+#endif
 
 
 
 	return 0;
+}
+
+int SecureGetWebFile(char *ServerName, char* WebFileName, char* pszContent)
+{
+
+	HINTERNET hInternet = InternetOpenA("PathFinder", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
+	if (!hInternet) {
+		//std:cerr << "InternetOpen failed: " << GetLastError() << std::endl;
+		return false;
+	}
+
+	HINTERNET hConnect = InternetConnectA(hInternet, ServerName, INTERNET_DEFAULT_HTTPS_PORT, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 1);
+	if (!hConnect) {
+		//std::cerr << "InternetConnect failed: " << GetLastError() << std::endl;
+		InternetCloseHandle(hInternet);
+		return false;
+	}
+
+	HINTERNET hRequest = HttpOpenRequestA(hConnect, "GET", WebFileName, NULL, NULL, NULL, INTERNET_FLAG_SECURE | INTERNET_FLAG_RELOAD, 1);
+	if (!hRequest) {
+		//std::cerr << "HttpOpenRequest failed: " << GetLastError() << std::endl;
+		InternetCloseHandle(hConnect);
+		InternetCloseHandle(hInternet);
+		return false;
+	}
+
+	if (!HttpSendRequestA(hRequest, NULL, 0, NULL, 0)) {
+		std::cerr << "HttpSendRequest failed: " << GetLastError() << std::endl;
+		InternetCloseHandle(hRequest);
+		InternetCloseHandle(hConnect);
+		InternetCloseHandle(hInternet);
+		return false;
+	}
+
+	// Check HTTP response code
+	DWORD statusCode = 0;
+	DWORD statusCodeSize = sizeof(statusCode);
+	//HTTP_QUERY_CONTENT_LENGTH
+	if (!HttpQueryInfoA(hRequest, HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER, &statusCode, &statusCodeSize, NULL)) {
+		std::wcerr << L"HttpQueryInfoW (status code) failed: " << GetLastError() << std::endl;
+		InternetCloseHandle(hRequest);
+		InternetCloseHandle(hConnect);
+		InternetCloseHandle(hInternet);
+		return false;
+	}
+	if (statusCode != 200) { // 200 OK
+		std::wcerr << L"HTTP request failed with status code: " << statusCode << std::endl;
+		InternetCloseHandle(hRequest);
+		InternetCloseHandle(hConnect);
+		InternetCloseHandle(hInternet);
+		return false;
+	}
+
+	//const int BUFFER_SIZE = 4096;
+	//char buffer[BUFFER_SIZE];
+	DWORD bytesRead, bufPos=0;
+
+	while (InternetReadFile(hRequest, pszContent+bufPos, 4096, &bytesRead) && bytesRead > 0) {
+		//outFile.write(buffer, bytesRead);
+		bufPos += bytesRead;
+	}
+	pszContent[bufPos] = 0;
+
+	//outFile.close();
+	InternetCloseHandle(hRequest);
+	InternetCloseHandle(hConnect);
+	InternetCloseHandle(hInternet);
+
+	return bufPos;
+}
+
+int downloadFileHTTPS(char* ServerName, char* WebFileName, char* LocalFileName)
+{
+
+	HINTERNET hInternet = InternetOpenA("HTTPSDownloader", INTERNET_OPEN_TYPE_DIRECT, NULL, NULL, 0);
+	if (!hInternet) {
+		//std::cerr << "InternetOpen failed: " << GetLastError() << std::endl;
+		return false;
+	}
+
+
+	HINTERNET hConnect = InternetConnectA(hInternet, ServerName, INTERNET_DEFAULT_HTTPS_PORT, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 1);
+	if (!hConnect) {
+		std::cerr << "InternetConnect failed: " << GetLastError() << std::endl;
+		InternetCloseHandle(hInternet);
+		return false;
+	}
+
+	HINTERNET hRequest = HttpOpenRequestA(hConnect, "GET", WebFileName, NULL, NULL, NULL, INTERNET_FLAG_SECURE | INTERNET_FLAG_RELOAD, 1);
+	if (!hRequest) {
+		std::cerr << "HttpOpenRequest failed: " << GetLastError() << std::endl;
+		InternetCloseHandle(hConnect);
+		InternetCloseHandle(hInternet);
+		return false;
+	}
+
+	if (!HttpSendRequestA(hRequest, NULL, 0, NULL, 0)) {
+		std::cerr << "HttpSendRequest failed: " << GetLastError() << std::endl;
+		InternetCloseHandle(hRequest);
+		InternetCloseHandle(hConnect);
+		InternetCloseHandle(hInternet);
+		return false;
+	}
+	
+	// Check HTTP response code
+	DWORD statusCode = 0;
+	DWORD statusCodeSize = sizeof(statusCode);
+	if (!HttpQueryInfoA(hRequest, HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER, &statusCode, &statusCodeSize, NULL)) {
+		std::wcerr << L"HttpQueryInfoW (status code) failed: " << GetLastError() << std::endl;
+		InternetCloseHandle(hRequest);
+		InternetCloseHandle(hConnect);
+		InternetCloseHandle(hInternet);
+		return false;
+	}
+	if (statusCode != 200) { // 200 OK
+		std::wcerr << L"HTTP request failed with status code: " << statusCode << std::endl;
+		InternetCloseHandle(hRequest);
+		InternetCloseHandle(hConnect);
+		InternetCloseHandle(hInternet);
+		return false;
+	}
+
+	std::ofstream outFile(LocalFileName, std::ios::binary);
+	if (!outFile.is_open()) {
+		//std::cerr << "Failed to open output file: " << filePath << std::endl;
+		InternetCloseHandle(hRequest);
+		InternetCloseHandle(hConnect);
+		InternetCloseHandle(hInternet);
+		return false;
+	}
+
+	const int BUFFER_SIZE = 4096;
+	char buffer[BUFFER_SIZE];
+	DWORD bytesRead;
+
+	while (InternetReadFile(hRequest, buffer, BUFFER_SIZE, &bytesRead) && bytesRead > 0) {
+		outFile.write(buffer, bytesRead);
+	}
+
+	outFile.close();
+	InternetCloseHandle(hRequest);
+	InternetCloseHandle(hConnect);
+	InternetCloseHandle(hInternet);
+
+	//std::cout << "File downloaded successfully to: " << filePath << std::endl;
+	return true;
 }

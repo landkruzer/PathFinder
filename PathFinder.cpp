@@ -26,7 +26,7 @@
 
 void LoadHelperDLLs();
 void LoadAllTables();
-void GetDBfromClound();
+void GetDBfromClound(bool bWaitTillCompletion);
 
 const char* g_szPFRegistry = "SOFTWARE\\MSOFT\\PATHFINDER";
 extern CStringList g_strMRUDestNames;
@@ -88,7 +88,7 @@ BOOL CPathFinderApp::InitInstance()
 		return FALSE;
 	}
 
-	
+
 	/*
 	if (!AfxSocketInit())
 	{
@@ -111,7 +111,7 @@ BOOL CPathFinderApp::InitInstance()
 		printf("WSAStartup failed with error: %d\n", err);
 		return 1;
 	}
-	
+
 
 	// AfxInitRichEdit2() is required to use RichEdit control
 	// AfxInitRichEdit2();
@@ -140,7 +140,7 @@ BOOL CPathFinderApp::InitInstance()
 	lstrcpy(g_szAppDataPath, appData);
 	lstrcat(g_szAppDataPath, "\\PathFinder");
 	CreateDirectory(g_szAppDataPath, NULL);
-	lstrcat(g_szAppDataPath, "\\13");
+	lstrcat(g_szAppDataPath, "\\15");
 	CreateDirectory(g_szAppDataPath, NULL);
 	lstrcpy(g_szDbPath, g_szAppDataPath);
 	lstrcat(g_szDbPath, "\\");
@@ -235,14 +235,18 @@ BOOL CPathFinderApp::InitInstance()
 
 			RegCloseKey(hRegKey);
 
-			LoadAllTables();
+			//LoadAllTables();
 
 		}
 
 	}
 
+	if (0 == g_nNICDBVersion) {
+		GetDBfromClound(true);
+		LoadAllTables();
+	}
+	else GetDBfromClound(false);
 
-	GetDBfromClound();
 
 	// Register the application's document templates.  Document templates
 	//  serve as the connection between documents, frame windows and views
@@ -295,6 +299,8 @@ protected:
 // Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnEnChangeEdit1();
 };
 
 CAboutDlg::CAboutDlg() noexcept : CDialogEx(IDD_ABOUTBOX)
@@ -307,6 +313,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+	//ON_EN_CHANGE(IDC_EDIT1, &CAboutDlg::OnEnChangeEdit1)
 END_MESSAGE_MAP()
 
 // App command to run the dialog
@@ -370,4 +377,14 @@ void UpdateDBVersionNumber(int DBType, int DBVersion)
 	}
 
 
+}
+
+void CAboutDlg::OnEnChangeEdit1()
+{
+	// TODO:  If this is a RICHEDIT control, the control will not
+	// send this notification unless you override the CDialogEx::OnInitDialog()
+	// function and call CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	// TODO:  Add your control notification handler code here
 }

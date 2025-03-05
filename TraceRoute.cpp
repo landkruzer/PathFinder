@@ -30,8 +30,8 @@
 #define MAXPRIVATEIP 3
 #define MAX_CONSECUTIVE_TIMEOUT 5
 
-const char *g_szICMPDLL = "icmp.dll";
-const char *g_szIPHelperDLL = "Iphlpapi.dll";
+//const char *g_szICMPDLL = "icmp.dll";
+//const char *g_szIPHelperDLL = "Iphlpapi.dll";
 char g_szDbPath[256];
 char g_szAppDataPath[512];
 int g_nMaxHops, g_nICMPTimeout,g_nNICDBVersion,g_nIP2ORGVersion,g_nIP2CNTRYVersion,g_nIP2LocVersion;
