@@ -4,5 +4,5 @@ Build instruction:
 Use Visual Studio 2022 to build this app. 
 
 Install instructions:
-Just run the Pathfinder.exe app. If windows defender says "trojan:win32/bearfoos.a!ml", you will have to exclude the directory from windows defender. 
+Just run the Pathfinder.exe app. Windows Defender may throw a warning. (only for the first time) If can be safely ignored. 
 
