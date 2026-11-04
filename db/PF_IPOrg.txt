@@ -1,4 +1,4 @@
-# Version 1013
+# Version 1014
 1.6.0.0/15,Sify
 1.22.0.0/15,Tikona Digital Networks
 1.39.0.0/16,Vodafone
@@ -6,6 +6,7 @@
 2.20.0.0/16,Akamai
 3.0.0.0/8,Amazon
 4.0.0.0/9,Level3 Communications
+4.128.0.0/9,Microsoft
 5.101.104.0/21,DigitalOcean
 8.8.4.0/24,Google
 8.8.8/24,Google
@@ -19,6 +20,7 @@
 13.200.0.0/13,Amazon
 13.208.0.0/12,Amazon
 13.224.0.0/12,Amazon
+13.244.0.0/14,Amazon
 13.248.0.0/14,Amazon
 14.96.0.0/14,TATA Communications
 14.102.0.0/17,WorldPhone
@@ -27,11 +29,24 @@
 15.185.0.0/16,Amazon
 15.206.0.0/15,Amazon
 15.230.0.0/16,Amazon
+15.236.0.0/14,Amazon
+15.240.0.0/15,Amazon
+15.242.0.0/16,Amazon
 18.32.0.0/11,Amazon
 18.64.0.0/10,Amazon
 18.128.0.0/9,Amazon
+20.33.0.0/16,Microsoft
+20.34.0.0/15,Microsoft
+20.36.0.0/14,Microsoft
+20.40.0.0/13,Microsoft
+20.48.0.0/12,Microsoft
+20.64.0.0/10,Microsoft
+20.128.0.0/16,Microsoft
+20.160.0.0/12,Microsoft
+20.176.0.0/14,Microsoft
 20.180.0.0/14,Microsoft
 20.184.0.0/13,Microsoft
+20.192.0.0/10,Microsoft
 23.0.0.0/12,Akamai
 23.20.0.0/14,Amazon
 23.32.0.0/11,Akamai
@@ -72,6 +87,7 @@
 40.125.0.0/17,Microsoft
 40.126.0.0/18,Microsoft
 42.104.0.0/13,Vodafone
+43.200.0.0/13,Amazon
 43.227.132/22,Power Grid
 44.192.0.0/10,Amazon
 45.60.0.0/16,Incapsula Inc
@@ -197,7 +213,11 @@
 72.246.135/24,Akamai
 74.119.76.0/22,Facebook
 74.125.0.0/16,Google
+74.224.0.0/14,Microsoft
 75.144.0.0/13,Comcast Cable Communications
+76.223.0.0/17,Amazon
+76.223.128.0/19,Amazon
+76.223.160.0/20,Amazon
 95.100.0.0/15,Akamai
 96.6.0.0/15,Akamai
 96.16.0.0/15,Akamai
@@ -291,7 +311,6 @@
 110.225/16,Airtel
 110.226/16,Airtel
 110.232.176.0/22,EdgeCast Networks
-110.234.0.0/15,Tulip
 111.91.0/17,Honesty Net Solution
 111.93.0.0/16,TATA Tele Services
 111.118.176.0/20,CYBER FUTURISTICS
@@ -377,6 +396,7 @@
 128.199.0.0/16,DigitalOcean
 129.134.0.0/16,Facebook
 130.211.0.0/16,Google
+131.186.0.0/16,Oracle Corporation
 132.226.0.0/16,Oracle Corporation
 134.209.0.0/16,DigitalOcean
 136.22.128.0/19,YouTube
@@ -384,11 +404,14 @@
 136.232/15,Reliance Jio
 137.97/16,Reliance Jio
 137.135.0.0/16,Microsoft
+138.113.0.0/16,Meteverse
 138.128.160.0/19,HostDime
 138.197.0.0/16,DigitalOcean
 139.59.0.0/16,DigitalOcean
+139.84.138.0/23,Vultr Holdings
 140.91.0.0/16,Oracle Corporation
 141.101.124/24,CloudFlare
+141.148.0.0/16,Oracle Corporation
 142.93.0.0/16,DigitalOcean
 142.250.0.0/15,Google
 143.204.0.0/16,Amazon
@@ -396,6 +419,7 @@
 148.62.0.0/16,Rackspace Hosting
 149.129.128.0/18,Alibaba
 150.107.120.0/22,TATA Communications
+150.171.0.0/16,Microsoft
 150.222.0.0/16,Amazon
 151.101.0.0/16,Fastly
 152.56.0.0/14,Reliance Jio
@@ -408,6 +432,7 @@
 157.227/16,TCS
 157.240.0.0/16,Facebook
 158.144/16,TIFR
+159.13.0.0/17,Oracle
 159.65.144/16,DigitalOcean
 159.89.0.0/16,DigitalOcean
 159.182.104/24,Pearson Data Center
@@ -430,15 +455,19 @@
 167.71.0.0/16,DigitalOcean
 167.114.0.0/16,OVH Hosting
 163.181.0.0/16,Alibaba
+166.117.0.0/16,Amazon
+168.138.0.0/16,Orcale Corporation
 169.149.192.0/18,Reliance Jio
 169.254.0.0/16,Private IP
 171.48/12,Airtel
 171.76.64.0/18,Airtel
 172.64.0.0/13,CloudFlare
+172.104.0.0/15,Akamai
 172.217.0.0/16,Google
 172.253.0.0/16,Google
 173.194.0.0/16,Google
 173.222.0/15,Akamai
+172.232.0.0/13,Linode
 173.252.64.0/18,Facebook
 174.138.0.0/17,DigitalOcean
 178.128.112.0/20,DigitalOcean
